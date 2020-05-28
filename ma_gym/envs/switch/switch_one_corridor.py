@@ -77,6 +77,16 @@ class Switch(gym.Env):
             self.__update_agent_view(agent_i)
         self.__draw_base_img()
 
+    def __rsi_init_full_obs(self, agent_pos:dict):
+        self.agent_pos = copy.copy(agent_pos)
+        self._full_obs = self.__create_grid()
+        for agent_i, pos in self.agent_pos.items():
+            self.__update_agent_view(agent_i)
+        self.__draw_base_img()
+
+    # def __rsi_reset_4_agent_pos(self, a:list, b:list, c:list, d:list):
+    #     self.agent_pos = {0: a, 1: b, 2: c, 3: d}        
+
     def get_agent_obs(self):
         _obs = []
         for agent_i in range(0, self.n_agents):
@@ -94,6 +104,13 @@ class Switch(gym.Env):
 
     def reset(self):
         self.__init_full_obs()
+        self._step_count = 0
+        self._agent_dones = [False for _ in range(self.n_agents)]
+        self._total_episode_reward = [0 for _ in range(self.n_agents)]
+        return self.get_agent_obs()
+
+    def rsi_reset(self, agent_pos:dict):
+        self.__rsi_init_full_obs(agent_pos)
         self._step_count = 0
         self._agent_dones = [False for _ in range(self.n_agents)]
         self._total_episode_reward = [0 for _ in range(self.n_agents)]
